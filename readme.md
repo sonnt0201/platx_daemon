@@ -22,13 +22,13 @@ TCP Gateway được thiết kế để các thiết bị nhúng có thể tạo
 
 Để tạo và giữ kết nối với gateway, mở cổng TCP socket và gửi `string` message như sau:
 
-```http
+```
 ${DEVICE_TOKEN}/json
 ```
 
 hoặc 
 
-```http
+```
 ${DEVICE_TOKEN}/bin
 ```
 
