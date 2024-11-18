@@ -1,0 +1,29 @@
+{
+  "name": "iotplat_gw",
+  "version": "1.0.0",
+  "description": "TCP gateway for IoT Plat Project",
+  "main": "build/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx tsc",
+    "watch": "tsc -w",
+    "start": "node --env-file=.env build/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "iotplat_gw"
+  },
+  "keywords": [
+    "tcp",
+    "gw",
+    "gateway",
+    "iot",
+    "platform"
+  ],
+  "author": "Thai-Son Nguyen",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.7",
+    "typescript": "^5.6.3"
+  }
+}
