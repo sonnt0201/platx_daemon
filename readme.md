@@ -60,4 +60,44 @@ Packet frame format (`little endian`):
 | --- | --- | --- | --- | --- | --- | --- |
 |  | timestamp | label (key) | number of values (`n`)  | `n` payload values | `\0` (byte end) | |
 
+Phù hợp với dữ liệu `integer` có thể biểu diễn bằng 2 bytes. Timestamp tính theo millisec.
+
+### Loại 2:
+
+| start | 8 bytes | 1 byte | 2 bytes | 4*n bytes | 1 byte | end |
+| --- | --- | --- | --- | --- | --- | --- |
+|  | timestamp | label (key) | number of values (`n`)  | `n` payload values | `\0` (byte end) | |
+
+Phù hợp với dữ liệu `integer` biểu diễn bằng 4 bytes.
+
+### `label`
+
+`label` quy ước nhãn (ví dụ U, I, nhiệt độ, độ ẩm, ...) cho dữ liệu cần gửi cũng như loại dữ liệu (2 bytes hay 4 bytes).
+
+Label reference:
+
+| Hex value | Label name | number of bytes for values |
+| --- | --- | --- |
+| 0x00 | U (vols) | 2 |
+| 0x01| I (Ampe) | 2 |
+|0x01 | P | Watts | 2 |
+||||
+||||
+||||
+||||
+||||
+||||
+||||
+||||
+||||
+||||
+||||
+||||
+||||
+||||
+
+
+
+
+
 
