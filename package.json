@@ -7,11 +7,15 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc",
     "watch": "tsc -w",
-    "start": "node --env-file=.env build/index.js"
+    "__tbAuth": "node --env-file=.env build/services/__tbauth/index.js",
+    "tcpgw": "node --env-file=.env build/services/tcp-gateway/index.js",
+    "main": "node --env-file=.env build/index.js",
+    "scheduler": "node --env-file=.env build/services/scheduler/index.js",
+    "start": "npm-run-all --parallel --continue-on-error __tbAuth  main tcpgw scheduler"
   },
   "repository": {
     "type": "git",
-    "url": "iotplat_gw"
+    "url": "platx_daemon"
   },
   "keywords": [
     "tcp",
@@ -23,7 +27,12 @@
   "author": "Thai-Son Nguyen",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.7.7",
-    "typescript": "^5.6.3"
+    "axios": "^1.7.9",
+    "colors": "^1.4.0",
+    "express": "^4.21.2",
+    "npm-run-all": "^4.1.5",
+    "pg": "^8.13.1",
+    "typescript": "^5.6.3",
+    "uuid": "^11.0.3"
   }
 }
