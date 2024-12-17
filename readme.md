@@ -60,9 +60,6 @@ Packet frame format (`little endian`):
 | --- | --- | --- | --- | --- | --- | --- |
 |  | timestamp | label (key) | number of values (`n`)  | `n` payload values | `\0` (byte end) | |
 
-<<<<<<< HEAD
-Phù hợp khi dữ liệu (telemetry) có giá trị nhỏ có thể biểu bằng 2 bytes.
-=======
 Phù hợp với dữ liệu `integer` có thể biểu diễn bằng 2 bytes. Timestamp tính theo millisec.
 
 ### Loại 2:
@@ -102,6 +99,4 @@ Label reference:
 
 
 
-
->>>>>>> update-md
 
