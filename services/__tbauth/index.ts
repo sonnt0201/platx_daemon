@@ -42,7 +42,7 @@ export async  function getTBToken (): Promise<string> {
 
 
             // check if error when login
-            if (result.error || !result.token) {
+            if (result.error) {
 
                 __LogE("Cannot login, check your username, password or thingsboard server");
 
@@ -51,9 +51,9 @@ export async  function getTBToken (): Promise<string> {
                 return ""; 
             }
 
-            __LogSuccess("Login successfully.")
+            __LogSuccess("Login successfully.Token: " + result.token)
 
-            return result.token;
+            return result.token || "";
 
             
 

@@ -1,6 +1,9 @@
 import { getWithAuth, postWithAuth, TBHost } from "../__tbauth";
 import { __Log, __LogE } from "./__SchedulerLog";
-import { IScheduleDaily, ScheduleAttributeKey } from "./_interfaces";
+
+import { ISchedule, SchedulesAttributeKey } from "./interface";
+
+import colors from 'colors';
 
 /**
  * Retrieves a shared attribute for a specific device from ThingsBoard.
@@ -50,12 +53,12 @@ export const tbPostDeviceSharedAttribute = <T>(deviceId: string, key: string, va
  * @param deviceId - The unique ID of the device.
  * @returns A promise that resolves with an array of IScheduleDaily objects.
  */
-export const getSchedulesDailyList: (deviceId: string) => Promise<IScheduleDaily[]> = async (id) => {
+export const getSchedulesList: (deviceId: string) => Promise<ISchedule[]> = async (id) => {
 
 
     try {
         // Retrieve the shared attribute for daily schedules
-        const res = await tbGetDeviceSharedAttribute(id, ScheduleAttributeKey.DAILY);
+        const res = await tbGetDeviceSharedAttribute(id, SchedulesAttributeKey);
 
         // Validate the response to ensure it contains the expected data
         if (!res || !res.data || !res.data[0].value) return [];
@@ -70,7 +73,7 @@ export const getSchedulesDailyList: (deviceId: string) => Promise<IScheduleDaily
 
     } catch (e) {
 
-        __LogE((e as Error).message)
+        __LogE("getSchedulesList".bold +   (e as Error).message)
 
         // Return an empty array if no valid data is found
         return [];
@@ -82,11 +85,11 @@ export const getSchedulesDailyList: (deviceId: string) => Promise<IScheduleDaily
 
 
 
-export const postSchedulesDailyList: (deviceId: string, list: IScheduleDaily[]) => Promise<number> = async (deviceId, list) => {
+export const postSchedulesList: (deviceId: string, list: ISchedule[]) => Promise<number> = async (deviceId, list) => {
 
 
     try {
-          const res = await tbPostDeviceSharedAttribute(deviceId, ScheduleAttributeKey.DAILY, list);
+          const res = await tbPostDeviceSharedAttribute(deviceId,SchedulesAttributeKey, list);
 
           return res.status? res.status : -1
 
@@ -96,9 +99,6 @@ export const postSchedulesDailyList: (deviceId: string, list: IScheduleDaily[]) 
 
         return -1
     }
-
-  
-
 
 
 }

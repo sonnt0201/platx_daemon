@@ -4,7 +4,7 @@ import path from 'path';
 // Enable colors
 colors.enable();
 
-const S = "\nScheduler: "; // Name of target service (with ": " postfix)
+const S = "\nDAEMON: "; // Name of target service (with ": " postfix)
 
 /**
  * Helper function to get the calling file path

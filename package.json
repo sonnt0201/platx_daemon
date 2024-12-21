@@ -10,8 +10,8 @@
     "__tbAuth": "node --env-file=.env build/services/__tbauth/index.js",
     "tcpgw": "node --env-file=.env build/services/tcp-gateway/index.js",
     "main": "node --env-file=.env build/index.js",
-    "scheduler": "node --env-file=.env build/services/scheduler/index.js",
-    "start": "npm-run-all --parallel --continue-on-error __tbAuth  main tcpgw scheduler"
+     "scheduler": "node --env-file=.env build/services/scheduler/index.js",
+    "start": "npm-run-all --parallel --continue-on-error  main tcpgw "
   },
   "repository": {
     "type": "git",
