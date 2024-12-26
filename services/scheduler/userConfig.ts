@@ -1,3 +1,4 @@
+import { postWithAuth } from '../__tbauth';
 import { __Log } from './__SchedulerLog';
 import { tbPostDeviceSharedAttribute } from './_TBAPIsClient';
 import { UserConfig } from './interface';
@@ -7,7 +8,9 @@ import { UserConfig } from './interface';
  * Exposed configs for user
  */
 export const userConfig: UserConfig = {
-    
+
+
+
     defaultDeviceConfigs: [
         {
 
@@ -46,13 +49,47 @@ export const userConfig: UserConfig = {
 
                 },
 
+                {
+                    control: "load-off",
+                    action: async () => {
+
+                        postWithAuth("/api/rpc/oneway/b7ca6200-ab97-11ef-89ae-b1b32c7b1fa7", {
+                            "method": "setState",
+                            "params": false,
+                            "persistent": false,
+                            "timeout": 5000
+                        })
+
+                    }
+
+
+                },
+
+                {
+                    control: "load-on",
+                    action: async () => {
+
+                        postWithAuth("/api/rpc/oneway/b7ca6200-ab97-11ef-89ae-b1b32c7b1fa7", {
+                            "method": "setState",
+                            "params": true,
+                            "persistent": false,
+                            "timeout": 5000
+                        })
+
+                    }
+
+
+                },
+
+
+
             ]
 
         },
 
         {
 
-            // Smart Socket - Dung
+            // PIR Array - Mung
             id: "a18623b0-9bea-11ef-a03a-b1b32c7b1fa7",
 
             eventHandler: [

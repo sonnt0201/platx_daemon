@@ -32,7 +32,7 @@ export async  function getTBToken (): Promise<string> {
 
     if (Auth.shouldDoLogin()) { // should do login
 
-        __Log("Logging in for you ...");
+        __Log("getTBToken: Logging in for you ...");
 
           const result = await Auth.login( // login
                 __env.username,

@@ -5,6 +5,9 @@ import { SchedulerRouter } from "./services/scheduler";
 import http from "http";
 import { __Log, __LogSuccess } from "./DaemonLog";
 
+import cors from 'cors';
+
+
 const HTTP_API_PORT = process.env.HTTP_API_PORT || 1212
 
 /**
@@ -14,6 +17,11 @@ const MasterHttpApp = express();
 
 // Middleware to parse JSON requests
 MasterHttpApp.use(express.json());
+
+/**
+ * remove CORS
+ */
+MasterHttpApp.use(cors({ origin: '*' })); 
 
 MasterHttpApp.use("/",SchedulerRouter);
 

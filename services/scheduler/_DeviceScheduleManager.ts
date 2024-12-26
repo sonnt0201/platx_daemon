@@ -125,12 +125,13 @@ export class _DeviceScheduleManager {
        
 
         __LogSuccess("Added a schedule, new list: ")
-        console.log(this.schedulesList)
+        console.log(this._schedulesList)
 
 
         // save to thingsboard server
         await postSchedulesList(this._deviceId, this._schedulesList)
 
+      
     }
 
     /**
