@@ -155,4 +155,32 @@ SchedulerRouter.get('/service/scheduler/:deviceId', async (req, res) => {
 
 })
 
+/**
+ * Delete a schedule (with id)
+ */
+SchedulerRouter.delete("/service/scheduler/:deviceId/schedule-id/:scheduleId", async (req, res) => {
+    const {deviceId, scheduleId} = req.params;
+
+    if (!ScheduleManagersMap.get(deviceId)) {
+        return res.status(400).json({
+            msg: "Service has no specified device"
+        })
+    }
+
+    const manager = ScheduleManagersMap.get(deviceId);
+
+    if (manager?.schedulesList.find(schedule => schedule.id === scheduleId) === undefined) {
+        return res.status(400).json({
+            msg: "No matched schedule found"
+        })
+    }
+
+    manager.deleteSchedule(scheduleId);
+
+    return res.status(200).json({
+        msg: "Deleted successfully"
+    })
+
+})
+
 export { SchedulerRouter }

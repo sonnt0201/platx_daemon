@@ -39,6 +39,9 @@ export class _DeviceScheduleManager {
 
    private _firstDataSync: boolean = false
 
+   /**
+    * Save current `_schedulesList` to thingsboard server
+    */
     async saveToThingsboard() {
         try {
            await postSchedulesList(this._deviceId, this._schedulesList)
@@ -132,6 +135,16 @@ export class _DeviceScheduleManager {
         await postSchedulesList(this._deviceId, this._schedulesList)
 
       
+    }
+
+    /**
+     * Delete a schedule.
+     * @param id id of the schedule to be deleted.
+     * 
+     */
+    async deleteSchedule(id: string) {
+        this._schedulesList = this._schedulesList.filter(schedule => schedule.id !== id) ;
+        this.saveToThingsboard();
     }
 
     /**
