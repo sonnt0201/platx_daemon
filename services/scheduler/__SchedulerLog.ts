@@ -4,7 +4,7 @@ import path from 'path';
 // Enable colors
 colors.enable();
 
-const S = "\nScheduler: "; // Name of target service (with ": " postfix)
+const S = "Scheduler: "; // Name of target service (with ": " postfix)
 
 /**
  * Helper function to get the calling file path
@@ -36,27 +36,36 @@ function getCallerFile(): string {
 
 /**
  * Normal log for service
- * @param msg string message to log
+ * @param msg string  message header to log
+ * @param content other information as msg body
  */
-export const __Log = (msg: string) => {
+export const __Log = (msg: string, content?: any) => {
     const filename = getCallerFile();
-    console.log(S.blue.bold, filename.bold, msg);
+    console.log(`\n[${Date.now()}]`.yellow , S.blue.bold, filename.bold, msg);
+
+    content &&  console.log(content)
 };
 
 /**
  * Log as error for service
- * @param msg string message to log
+ * @param msg string header message to log
+ *  @param content other information as msg body
  */
-export const __LogE = (msg: string) => {
+export const __LogE = (msg: string, content?: any) => {
     const filename = getCallerFile();
-    console.log(S.blue.bold, filename.bold, msg.red);
+    console.log(`\n[${Date.now()}]`.yellow , S.blue.bold, filename.bold, msg.red);
+
+   content && console.log(content)
 };
 
 /**
  * Log as success for service
  * @param msg string message to log
+ *  @param content other information as msg body
  */
-export const __LogSuccess = (msg: string) => {
+export const __LogSuccess = (msg: string, content?: any) => {
     const filename = getCallerFile();
-    console.log(S.blue.bold, filename.bold, msg.green);
+    console.log(`\n[${Date.now()}]`.yellow , S.blue.bold, filename.bold, msg.green);
+
+    content &&  console.log(content)
 };

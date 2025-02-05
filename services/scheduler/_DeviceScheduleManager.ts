@@ -1,11 +1,14 @@
+// import { ISchedule } from '@/models/client/Schedule';
 
 import { __Log, __LogE, __LogSuccess } from "./__SchedulerLog";
 import { getSchedulesList, postSchedulesList, tbGetDeviceSharedAttribute } from "./_TBAPIsClient";
-import { ControlLabel, ISchedule, SchedulesAttributeKey } from "./interface";
+import { ControlLabel, ISchedule, SchedulesAttributeKey, TimestampOptions } from "./interface";
 import { v4 as uuidv4 } from "uuid";
 
 /**
  * Used to fetch, add, edit, save schedules list of a specific DEVICE.
+ * 
+ * Specified by DEVICE ID (each TB device goes with one Schedule manager)
  * 
  * When init, fetch schedules from thingsboard
  * 
@@ -13,7 +16,7 @@ import { v4 as uuidv4 } from "uuid";
  * 
  * Whenever changes happen, save it to thingsboard.
  * 
- * Exposes function to crud schdules list
+ * Exposes function to crud schedules list
  * 
  */
 export class _DeviceScheduleManager {
@@ -25,7 +28,7 @@ export class _DeviceScheduleManager {
 
     private _schedulesList: ISchedule[] = [];
 
-    get schedulesList () { return this._schedulesList}
+    get schedulesList() { return this._schedulesList }
 
     private _checkerInterval: NodeJS.Timeout | undefined
 
@@ -37,19 +40,24 @@ export class _DeviceScheduleManager {
     eventHandlers: Map<ControlLabel, () => void> = new Map();
 
 
-   private _firstDataSync: boolean = false
+    /**
+     * Check if data is sync from the TB server when object initialization
+     */
+    private _firstDataSync: boolean = false
 
-   /**
-    * Save current `_schedulesList` to thingsboard server
-    */
+    /**
+     * Save current `_schedulesList` to thingsboard server
+     * 
+     * Should be called after CRUD operations
+     */
     async saveToThingsboard() {
         try {
-           await postSchedulesList(this._deviceId, this._schedulesList)
+            await postSchedulesList(this._deviceId, this._schedulesList)
         } catch (e) {
             __LogE("Error happened when saving schedules")
             __LogE((e as Error).message)
         }
-       
+
     }
 
     /**
@@ -70,6 +78,8 @@ export class _DeviceScheduleManager {
      * Must be called right after init
      * 
      * sync the schedules list data with thingsboard server
+     * 
+     * Data is fetched (one way) from Thingsboard
      */
     async syncData() {
 
@@ -79,7 +89,12 @@ export class _DeviceScheduleManager {
             if (res.data && Array.isArray(res.data) && res.data.length > 0 && res.data[0].value) {
                 this._schedulesList = res.data[0].value as ISchedule[]
 
+                __LogSuccess("Fetch TB Device attributes:")
+                console.log(res.data[0].value)
+
+
                 __LogSuccess("Data sync successfully.")
+
 
             } else {
                 __Log("Empty data from server, init with empty array")
@@ -94,13 +109,13 @@ export class _DeviceScheduleManager {
 
     }
 
-    async addScheduleDaily( control: string, hour: number = 0, minute: number = 0, second: number = 0): Promise<void> {
+    async addScheduleDaily(control: string, hour: number = 0, minute: number = 0, second: number = 0): Promise<void> {
 
         if (!this._firstDataSync) {
             __LogE("Data is not sync yet, call syncData() first")
         }
 
-      
+
 
         const id = uuidv4();
 
@@ -117,7 +132,7 @@ export class _DeviceScheduleManager {
         const newSchedule: ISchedule = {
             id: id,
             control: control,
-
+            repeatCount: -1,
             incomingTime: incoming.getTime(),
             repeatTime: 1000 * 60 * 60 * 24 // one day
         };
@@ -125,7 +140,7 @@ export class _DeviceScheduleManager {
         // Push the new schedule into the list
         this._schedulesList.push(newSchedule);
 
-       
+
 
         __LogSuccess("Added a schedule, new list: ")
         console.log(this._schedulesList)
@@ -134,8 +149,10 @@ export class _DeviceScheduleManager {
         // save to thingsboard server
         await postSchedulesList(this._deviceId, this._schedulesList)
 
-      
+
     }
+
+
 
     /**
      * Delete a schedule.
@@ -143,14 +160,110 @@ export class _DeviceScheduleManager {
      * 
      */
     async deleteSchedule(id: string) {
-        this._schedulesList = this._schedulesList.filter(schedule => schedule.id !== id) ;
+        this._schedulesList = this._schedulesList.filter(schedule => schedule.id !== id);
         this.saveToThingsboard();
     }
 
     /**
+     * Edit (update) a schedule
+     * 
+     * can be used for PUT operations
+     * 
+     * @param id id of the schedule 
+     * 
+     * @param options keys and values of updated schedule's properties.
+     * 
+     */
+    async editSchedule(id: string, options: Omit<ISchedule, 'id'>) {
+
+        this._schedulesList = this._schedulesList.map(s => {
+
+            // guard
+            if (s.id !== id) return s;
+
+            // main logic
+
+            // loop through edited properties
+            Object.keys(options).forEach(key => {
+                // Type assertion to fix indexing issue
+                if (key in s) {
+                    (s as any)[key] = options[key as keyof typeof options];
+                }
+
+
+            });
+
+            return s;
+        }) // end "map" callback
+
+        // save new schedule list
+        this.saveToThingsboard();
+
+
+    }
+
+
+    /**
+   * 
+   * @param options options for the scheduler (actually `ISchedule` properties except `id`, 'cause `id` is auto-generated)
+   * 
+   * See [ISchdule](interface.ts)
+   *  
+   */
+    async addCustomSchedule(options: Omit<ISchedule, "id">) {
+
+        if (!this._firstDataSync) {
+            __LogE("Data is not sync yet, call syncData() first")
+        }
+
+
+
+        const id = uuidv4();
+
+        // Calculate the incoming timestamp (in milliseconds) matching the hour, minute, and second
+        const now = new Date();
+
+
+
+        // check valid options
+        if (!options.repeatTime || options.repeatTime <= TimestampOptions.ONE_MIN) { // if invalid
+            __LogE("Invalid repeatTime when adding a custom schedule ")
+            console.log({
+
+                deviceId: this.deviceId
+            })
+        }
+
+        /**
+         * new schedule to create
+         */
+        const newSchedule: ISchedule = {
+            incomingTime: options.incomingTime ?? Date.now(),
+            repeatTime: options.repeatTime,
+            repeatCount: options.repeatCount ?? -1,
+            id: id,
+            control: options.control
+        }
+
+        this._schedulesList.push(newSchedule)
+
+        __LogSuccess("Added a schedule, new list: ")
+        console.log(this._schedulesList)
+
+
+        // save to thingsboard server
+        await postSchedulesList(this._deviceId, this._schedulesList)
+
+
+    }
+
+
+
+
+    /**
      * Call after init and sync data
      * 
-     * set interval to loop through the schedule list to check if sheduled time has come
+     * set interval to loop through the schedule list to check if sheduled dealine has come
      */
     async startTimer() {
 
@@ -163,30 +276,50 @@ export class _DeviceScheduleManager {
             this._checkerInterval = setInterval(() => {
 
                 this._schedulesList.forEach((schedule) => {
-                    
-                    
+
+
                     const current = Date.now();
-                    
+
                     // __Log("Compare time now - scheduleTime: " 
                     //     + current.toString() 
                     //     + "-" + schedule.incomingTime.toString()
                     //     + `\nSeconds until next scheduled time: ${(schedule.incomingTime - current)/1000} secs`
                     // )
-                  
-                    // when scheduled time comes, fire mapped event handler
-                    if (current >= schedule.incomingTime) {
 
-                        // add schedule
-                        schedule.incomingTime += schedule.repeatTime;
-                        __Log("Event happened: " )
-                        console.log({
-                           device:  this.deviceId,
-                           control: schedule.control
-                        })
+                    // when scheduled time comes, fire mapped event handler
+                    if (current >= schedule.incomingTime 
+                        && schedule.repeatCount !== 0 // equal -1 (indefinitely) or possitive
+                    
+                    ) {
+
+                        // calculate next scheduled time
+                        schedule.incomingTime += schedule.repeatTime * (
+                            Math.floor((Date.now() - schedule.incomingTime) / schedule.repeatTime) // ensure next scheduled time jumps over current time
+                            + 1
+                        );
+
+
+
+                        
 
                         // fire event handler
-                       const callback = this.eventHandlers.get(schedule.control);
-                       if (callback) callback();
+                        const callback = this.eventHandlers.get(schedule.control);
+
+                        try {
+                            if (callback)   callback(); // FIRE EVENT
+                        } catch (e) {
+                            console.log((e as Error).message)
+                        }
+
+                        // decreate time counter
+                        if (schedule.repeatCount > 0) schedule.repeatCount--;
+                        __Log("Event happened: ")
+                        console.log({
+                            device: this.deviceId,
+                            control: schedule.control,
+                            repeatCount: schedule.repeatCount
+                        })
+
 
                        // save new list to thingsboard
                        this.saveToThingsboard();
@@ -196,7 +329,7 @@ export class _DeviceScheduleManager {
                 })
 
 
-            }, 5000) // check each 5 second 
+            }, 1000) // check each 1 seconds 
 
             __LogSuccess("Checker interval started!");
 

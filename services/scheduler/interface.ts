@@ -1,4 +1,11 @@
 
+/**
+ * Interface for a schedule
+ * 
+ * Can belong to any device
+ * 
+ * Specified by schedule's id
+ */
 export interface ISchedule {
 
     /**
@@ -11,10 +18,22 @@ export interface ISchedule {
 
     /**
      * period of schedule in milliseconds
-     * if equal to 0, the scheduled event is called only one time
+     * 
+     * must be at least one minute (60000)
      */
     repeatTime: number;
 
+
+    /**
+        * - The number of times the schedule will repeat.
+        * - Each time the deadline passes, `repeatCount` decreases by 1.
+        * - If `repeatCount` is `-1`, the schedule repeats indefinitely.
+     */
+    repeatCount: number;
+
+    /**
+     * Id of the schedule
+     */
     id: string;
 
     /**
@@ -29,6 +48,7 @@ export interface ISchedule {
 export const SchedulesAttributeKey = "_schedules"
 
 export enum TimestampOptions {
+    ONE_MIN = 1000 * 60,
     ONE_DAY = 1000 * 60 * 60 * 24,
     ONE_HOUR = 1000 * 60 * 60,
     ONE_WEEK = 1000 * 60 * 60 * 24 * 7

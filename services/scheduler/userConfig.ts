@@ -6,6 +6,8 @@ import { UserConfig } from './interface';
 
 /**
  * Exposed configs for user
+ * 
+ * Used for define callback function when scheduled time comes
  */
 export const userConfig: UserConfig = {
 
