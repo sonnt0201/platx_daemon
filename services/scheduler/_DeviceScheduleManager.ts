@@ -159,8 +159,10 @@ export class _DeviceScheduleManager {
      * @param id id of the schedule to be deleted.
      * 
      */
-    async deleteSchedule(id: string) {
-        this._schedulesList = this._schedulesList.filter(schedule => schedule.id !== id);
+    async deleteSchedules(ids: string[]) {
+
+
+        this._schedulesList = this._schedulesList.filter(schedule => !ids.includes(schedule.id));
         this.saveToThingsboard();
     }
 
@@ -287,9 +289,9 @@ export class _DeviceScheduleManager {
                     // )
 
                     // when scheduled time comes, fire mapped event handler
-                    if (current >= schedule.incomingTime 
+                    if (current >= schedule.incomingTime
                         && schedule.repeatCount !== 0 // equal -1 (indefinitely) or possitive
-                    
+
                     ) {
 
                         // calculate next scheduled time
@@ -300,13 +302,13 @@ export class _DeviceScheduleManager {
 
 
 
-                        
+
 
                         // fire event handler
                         const callback = this.eventHandlers.get(schedule.control);
 
                         try {
-                            if (callback)   callback(); // FIRE EVENT
+                            if (callback) callback(); // FIRE EVENT
                         } catch (e) {
                             console.log((e as Error).message)
                         }
@@ -321,8 +323,8 @@ export class _DeviceScheduleManager {
                         })
 
 
-                       // save new list to thingsboard
-                       this.saveToThingsboard();
+                        // save new list to thingsboard
+                        this.saveToThingsboard();
 
                     }
 

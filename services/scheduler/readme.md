@@ -69,9 +69,14 @@ Partial<ISchedule>
 ```
 ---
 
-### **Delete a Schedule**
+### **Delete Schedules**
 
-**DELETE** `/service/scheduler/:deviceId/schedule-id/:scheduleId`
+**DELETE** `/service/scheduler/:deviceId/schedule-ids/:scheduleIds`
+
+Params: 
+
+- **deviceId**: id of device holding the schedules
+- **scheduleIds**: id list of schedules to be deleted, seperated by addition symbol `+`.
 
 **Response:**
 ```ts

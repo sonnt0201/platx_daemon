@@ -3,7 +3,7 @@ import path from 'path';
 
 // Enable colors
 colors.enable();
-
+/** Service name */
 const S = "Scheduler: "; // Name of target service (with ": " postfix)
 
 /**
@@ -41,7 +41,7 @@ function getCallerFile(): string {
  */
 export const __Log = (msg: string, content?: any) => {
     const filename = getCallerFile();
-    console.log(`\n[${Date.now()}]`.yellow , S.blue.bold, filename.bold, msg);
+    console.log(`\n[${Date.now()}]`.blue , S.blue.bold, filename.bold, msg);
 
     content &&  console.log(content)
 };
@@ -53,7 +53,7 @@ export const __Log = (msg: string, content?: any) => {
  */
 export const __LogE = (msg: string, content?: any) => {
     const filename = getCallerFile();
-    console.log(`\n[${Date.now()}]`.yellow , S.blue.bold, filename.bold, msg.red);
+    console.log(`\n[${Date.now()}]`.blue , S.blue.bold, filename.bold, msg.red);
 
    content && console.log(content)
 };
@@ -65,7 +65,7 @@ export const __LogE = (msg: string, content?: any) => {
  */
 export const __LogSuccess = (msg: string, content?: any) => {
     const filename = getCallerFile();
-    console.log(`\n[${Date.now()}]`.yellow , S.blue.bold, filename.bold, msg.green);
+    console.log(`\n[${Date.now()}]`.blue , S.blue.bold, filename.bold, msg.green);
 
     content &&  console.log(content)
 };
