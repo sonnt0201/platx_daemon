@@ -103,7 +103,7 @@ class AuthClass implements IAuth {
             })
 
             if (res.status === 200) {
-                const data = res.data;
+                const data = res.data as { token: string, refreshToken: string };
                 // console.log(res.data);
 
                 this.state = {
@@ -230,7 +230,7 @@ class AuthClass implements IAuth {
             const url = UserConstants.THINGSBOARD_HOST + `/api/auth/token`
             const res = await axios.post(url, { refreshToken: refreshToken });
             if (res.status === 200) {
-                const data = res.data;
+                const data = res.data as { token: string, refreshToken: string };
                 // console.log(res.data);
 
 

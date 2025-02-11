@@ -1,5 +1,6 @@
-import { postWithAuth } from '../__tbauth';
-import { __Log } from './__SchedulerLog';
+import { getTBToken, postWithAuth } from '../__tbauth';
+import { __env } from '../__tbauth/__env';
+import { __Log, __LogE } from './__SchedulerLog';
 import { tbPostDeviceSharedAttribute } from './_TBAPIsClient';
 import { UserConfig } from './interface';
 
@@ -54,13 +55,31 @@ export const userConfig: UserConfig = {
                 {
                     control: "load-off",
                     action: async () => {
+                       
+                            try {
+                               await axios.post(
+                                    __env.tbHost + "/api/rpc/oneway/b7ca6200-ab97-11ef-89ae-b1b32c7b1fa7",
+                                    {
+                                        "method": "setState",
+                                        "params": false,
+                                        "persistent": false
+                                    },
+                                    {
+                                        headers: {
+                                            "X-Authorization": `Bearer ${await getTBToken()}`
+                                        },
+                                        validateStatus: () => true // Prevent axios from throwing errors on non-2xx status
+                                    }
+                                ).catch((error) => {
+                                    // Silently handle any error without logging it
+                                    __LogE("Thingsboard server: Error happened, maybe Firmware device is not connected");
+                                });
+                            } catch (_) {
+                                // Handle any other unexpected errors
+                                __LogE("Thingsboard server: Firmware device is not connected");
+                            }
+                       
 
-                        postWithAuth("/api/rpc/oneway/b7ca6200-ab97-11ef-89ae-b1b32c7b1fa7", {
-                            "method": "setState",
-                            "params": false,
-                            "persistent": false,
-                            "timeout": 5000
-                        })
 
                     }
 
@@ -70,16 +89,33 @@ export const userConfig: UserConfig = {
                 {
                     control: "load-on",
                     action: async () => {
+                       
+                            try {
+                               await axios.post(
+                                    __env.tbHost + "/api/rpc/oneway/b7ca6200-ab97-11ef-89ae-b1b32c7b1fa7",
+                                    {
+                                        "method": "setState",
+                                        "params": true,
+                                        "persistent": false
+                                    },
+                                    {
+                                        headers: {
+                                            "X-Authorization": `Bearer ${await getTBToken()}`
+                                        },
+                                        validateStatus: () => true // Prevent axios from throwing errors on non-2xx status
+                                    }
+                                ).catch((error) => {
+                                    // Silently handle any error without logging it
+                                    __LogE("Thingsboard server: Error happened, maybe Firmware device is not connected");
+                                });
+                            } catch (_) {
+                                // Handle any other unexpected errors
+                                __LogE("Thingsboard server: Firmware device is not connected");
+                            }
+                      
 
-                        postWithAuth("/api/rpc/oneway/b7ca6200-ab97-11ef-89ae-b1b32c7b1fa7", {
-                            "method": "setState",
-                            "params": true,
-                            "persistent": false,
-                            "timeout": 5000
-                        })
 
                     }
-
 
                 },
 

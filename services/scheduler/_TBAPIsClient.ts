@@ -58,7 +58,7 @@ export const getSchedulesList: (deviceId: string) => Promise<ISchedule[]> = asyn
 
     try {
         // Retrieve the shared attribute for daily schedules
-        const res = await tbGetDeviceSharedAttribute(id, SchedulesAttributeKey);
+        const res = await tbGetDeviceSharedAttribute(id, SchedulesAttributeKey) as { data: { [key: string]: any }[] };
 
         // Validate the response to ensure it contains the expected data
         if (!res || !res.data || !res.data[0].value) return [];
@@ -91,7 +91,7 @@ export const postSchedulesList: (deviceId: string, list: ISchedule[]) => Promise
     try {
           const res = await tbPostDeviceSharedAttribute(deviceId,SchedulesAttributeKey, list);
 
-          return res.status? res.status : -1
+          return res?.status? res.status : -1
 
     } catch (e) {
         
