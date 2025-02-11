@@ -41,7 +41,8 @@ function getCallerFile(): string {
  */
 export const __Log = (msg: string, content?: any) => {
     const filename = getCallerFile();
-    console.log(`\n[${Date.now()}]`.blue , S.blue.bold, filename.bold, msg);
+    const currentDate = new Date().toLocaleString();
+    console.log(`\n[${currentDate}]`.blue, S.blue.bold, filename.bold, msg);
 
     content &&  console.log(content)
 };
@@ -53,7 +54,8 @@ export const __Log = (msg: string, content?: any) => {
  */
 export const __LogE = (msg: string, content?: any) => {
     const filename = getCallerFile();
-    console.log(`\n[${Date.now()}]`.blue , S.blue.bold, filename.bold, msg.red);
+    const currentDate = new Date().toLocaleString();
+    console.log(`\n[${currentDate}]`.blue , S.blue.bold, filename.bold, msg.red);
 
    content && console.log(content)
 };
@@ -65,7 +67,8 @@ export const __LogE = (msg: string, content?: any) => {
  */
 export const __LogSuccess = (msg: string, content?: any) => {
     const filename = getCallerFile();
-    console.log(`\n[${Date.now()}]`.blue , S.blue.bold, filename.bold, msg.green);
+    const currentDate = new Date().toLocaleString();
+    console.log(`\n[${currentDate}]`.blue , S.blue.bold, filename.bold, msg.green);
 
     content &&  console.log(content)
 };
